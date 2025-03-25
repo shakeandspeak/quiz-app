@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import '../App.css';
 
 const QuizCreator = () => {
@@ -166,7 +167,7 @@ const QuizCreator = () => {
   };
 
   // Save the entire quiz
-  const handleSaveQuiz = () => {
+  const handleSaveQuiz = async () => {
     if (!quizTitle) {
       alert('Please enter a quiz title');
       return;
@@ -178,21 +179,25 @@ const QuizCreator = () => {
     }
 
     const quiz = {
-      id: Date.now().toString(),
       title: quizTitle,
       questions: questions,
-      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString(),
     };
 
-    console.log('Saved Quiz:', quiz);
+    try {
+      const { data, error } = await supabase.from('quizzes').insert([quiz]);
 
-    // Save quiz to localStorage for now (can be replaced with API call later)
-    const savedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-    savedQuizzes.push(quiz);
-    localStorage.setItem('quizzes', JSON.stringify(savedQuizzes));
-    
-    alert('Quiz saved successfully!');
-    navigate('/');
+      if (error) {
+        console.error('Error saving quiz:', error);
+        alert('Failed to save quiz. Please try again.');
+      } else {
+        alert('Quiz saved successfully!');
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      alert('An unexpected error occurred. Please try again.');
+    }
   };
 
   const getQuestionTypeName = (type) => {
