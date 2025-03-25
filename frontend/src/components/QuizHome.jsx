@@ -49,17 +49,39 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   // If showSingleQuiz and id are provided, find and set the specific quiz
   useEffect(() => {
     if (showSingleQuiz && id) {
-      const quiz = availableQuizzes.find(q => q.id === id);
-      if (quiz) {
-        setSelectedQuiz(quiz);
-      } else {
-        // If quiz not found, navigate back to home
-        navigate('/');
-      }
+      const fetchSingleQuiz = async () => {
+        // First try to find it in already loaded quizzes
+        const quiz = availableQuizzes.find(q => q.id === id);
+        if (quiz) {
+          setSelectedQuiz(quiz);
+        } else {
+          // If not found, fetch it directly from Supabase
+          const { data, error } = await supabase
+            .from('quizzes')
+            .select('*')
+            .eq('id', id)
+            .single();
+          
+          if (error) {
+            console.error('Error fetching quiz:', error);
+            alert('Failed to load quiz. Please try again later.');
+            navigate('/');
+          } else if (data) {
+            setSelectedQuiz(data);
+          } else {
+            // If quiz not found, navigate back to home
+            navigate('/');
+          }
+        }
+      };
+      
+      fetchSingleQuiz();
     }
   }, [id, showSingleQuiz, navigate, availableQuizzes]);
 
   const handleQuizSelect = (quiz) => {
+    console.log('Quiz selected:', quiz);
+    setSelectedQuiz(quiz);
     navigate(`/quiz/${quiz.id}`);
   };
   
@@ -272,7 +294,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
                     <div className="quiz-meta">
                       <span>{quiz.questions.length} questions</span>
                       <span>•</span>
-                      <span>Created: {new Date(quiz.createdAt).toLocaleDateString()}</span>
+                      <span>Created: {new Date(quiz.created_at).toLocaleDateString()}</span>
                     </div>
                   </div>
                   <div className="quiz-card-footer">
@@ -332,6 +354,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   }
   
   // Show results or current question
+  console.log('Rendering QuizHome:', { selectedQuiz, quizStarted, showResults });
   return showResults ? renderResults() : renderQuestion();
 };
 

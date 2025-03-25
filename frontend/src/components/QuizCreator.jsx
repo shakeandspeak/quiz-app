@@ -185,14 +185,22 @@ const QuizCreator = () => {
     };
 
     try {
-      const { data, error } = await supabase.from('quizzes').insert([quiz]);
+      // Add .select() to return the inserted data including the generated ID
+      const { data, error } = await supabase
+        .from('quizzes')
+        .insert([quiz])
+        .select();
 
       if (error) {
         console.error('Error saving quiz:', error);
-        alert('Failed to save quiz. Please try again.');
-      } else {
+        alert(`Failed to save quiz: ${error.message}`);
+      } else if (data && data.length > 0) {
+        console.log('Quiz saved successfully:', data[0]);
         alert('Quiz saved successfully!');
         navigate('/');
+      } else {
+        console.error('No data returned after saving quiz');
+        alert('Failed to save quiz. Please try again.');
       }
     } catch (err) {
       console.error('Unexpected error:', err);
