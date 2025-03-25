@@ -316,55 +316,43 @@ const QuizCreator = () => {
               ></textarea>
             </div>
 
-            {(currentQuestion.questionType === 'multiple-choice' || currentQuestion.questionType === 'true-false') && (
-              <div className="form-group">
-                <label>Options</label>
-                <div className="options-form">
-                  {currentQuestion.options.map((option, index) => (
-                    <div key={index} className="option-row">
+            {(currentQuestion.questionType === 'multiple-choice') && (
+              <div className="options-form">
+                {currentQuestion.options.map((option, index) => (
+                  <div key={index} className="option-row">
+                    <input
+                      type="text"
+                      className="form-control option-input"
+                      value={option}
+                      onChange={(e) => handleOptionChange(index, e.target.value)}
+                      placeholder={`Option ${index + 1}`}
+                    />
+                    <div className="radio-group">
                       <input
-                        type="text"
-                        className="form-control option-input"
-                        value={option}
-                        onChange={(e) => handleOptionChange(index, e.target.value)}
-                        placeholder={`Option ${index + 1}`}
-                        disabled={currentQuestion.questionType === 'true-false'}
+                        type="radio"
+                        id={`correct-${index}`}
+                        name="correctAnswer"
+                        checked={currentQuestion.correctAnswer === option}
+                        onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: option })}
                       />
-                      
-                      <div className="radio-group">
-                        <input
-                          type="radio"
-                          id={`correct-${index}`}
-                          name="correctAnswer"
-                          checked={currentQuestion.correctAnswer === option}
-                          onChange={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: option })}
-                          disabled={!option}
-                        />
-                        <label htmlFor={`correct-${index}`}>Correct</label>
-                      </div>
-                      
-                      {currentQuestion.questionType === 'multiple-choice' && (
-                        <button 
-                          onClick={() => handleRemoveOption(index)} 
-                          className="btn btn-danger"
-                          disabled={currentQuestion.options.length <= 2}
-                        >
-                          Remove
-                        </button>
-                      )}
+                      <label htmlFor={`correct-${index}`}>Correct</label>
                     </div>
-                  ))}
-                  
-                  {currentQuestion.questionType === 'multiple-choice' && (
-                    <button 
-                      onClick={handleAddOption} 
-                      className="btn btn-outline"
-                      disabled={currentQuestion.options.length >= 6}
+                    <button
+                      onClick={() => handleRemoveOption(index)}
+                      className="btn btn-danger"
+                      disabled={currentQuestion.options.length <= 2}
                     >
-                      Add Option
+                      Remove
                     </button>
-                  )}
-                </div>
+                  </div>
+                ))}
+                <button
+                  onClick={handleAddOption}
+                  className="btn btn-outline"
+                  disabled={currentQuestion.options.length >= 6}
+                >
+                  Add Option
+                </button>
               </div>
             )}
 
@@ -378,6 +366,21 @@ const QuizCreator = () => {
                   onChange={(e) => setCurrentQuestion({ ...currentQuestion, correctAnswer: e.target.value })}
                   placeholder="Enter correct answer"
                 />
+              </div>
+            )}
+
+            {currentQuestion.questionType === 'true-false' && (
+              <div className="options-form">
+                {currentQuestion.options.map((option, index) => (
+                  <div 
+                    key={index} 
+                    className={`option-row ${currentQuestion.correctAnswer === option ? (option === 'True' ? 'selected-true' : 'selected-false') : ''}`}
+                    onClick={() => setCurrentQuestion({ ...currentQuestion, correctAnswer: option })}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <span className="form-control option-input">{option}</span>
+                  </div>
+                ))}
               </div>
             )}
 

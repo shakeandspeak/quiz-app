@@ -87,6 +87,12 @@ const QuizHome = ({ showSingleQuiz = false }) => {
     navigate('/');
   };
 
+  const handleDeleteQuiz = (quizId) => {
+    const updatedQuizzes = availableQuizzes.filter((quiz) => quiz.id !== quizId);
+    setAvailableQuizzes(updatedQuizzes);
+    localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+  };
+
   const renderQuestion = () => {
     const question = selectedQuiz.questions[currentQuestion];
     
@@ -201,6 +207,12 @@ const QuizHome = ({ showSingleQuiz = false }) => {
                       className="btn btn-primary"
                     >
                       Start Quiz
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteQuiz(quiz.id)} 
+                      className="btn btn-danger"
+                    >
+                      Delete Quiz
                     </button>
                   </div>
                 </div>

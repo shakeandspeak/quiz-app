@@ -536,3 +536,15 @@
 .animate-fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+.selected-true {
+  background-color: #a8e6a1;
+  border: 2px solid #4caf50;
+  border-radius: var(--border-radius);
+}
+
+.selected-false {
+  background-color: #f5a6a6;
+  border: 2px solid #f44336;
+  border-radius: var(--border-radius);
+}
