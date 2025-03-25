@@ -159,11 +159,10 @@ const QuizHome = ({ showSingleQuiz = false }) => {
       }
 
       // Delete the quiz from Supabase
-      const { error, count } = await supabase
+      const { error } = await supabase
         .from('quizzes')
         .delete()
-        .eq('id', quizId)
-        .select('count'); // Add this to get the count of deleted items
+        .eq('id', quizId);
       
       if (error) {
         console.error('Error deleting quiz:', error);
@@ -171,7 +170,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
         return;
       }
       
-      console.log('Delete response count:', count);
+      console.log('Quiz deleted successfully from Supabase.');
       
       // Update local state
       const updatedQuizzes = availableQuizzes.filter((quiz) => quiz.id !== quizId);
