@@ -98,6 +98,15 @@ const QuizHome = ({ showSingleQuiz = false }) => {
     localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
   };
 
+  const handleCopyLink = (quizId) => {
+    const quizLink = `${window.location.origin}/quiz/${quizId}`;
+    navigator.clipboard.writeText(quizLink).then(() => {
+      alert('Quiz link copied to clipboard!');
+    }).catch(() => {
+      alert('Failed to copy the link. Please try again.');
+    });
+  };
+
   const renderQuestion = () => {
     const question = selectedQuiz.questions[currentQuestion];
     
@@ -222,6 +231,13 @@ const QuizHome = ({ showSingleQuiz = false }) => {
                 <div key={quiz.id} className="quiz-card">
                   <div className="quiz-card-header">
                     <h3>{quiz.title}</h3>
+                    <button 
+                      onClick={() => handleCopyLink(quiz.id)} 
+                      className="btn btn-icon copy-link-button"
+                      title="Copy Link"
+                    >
+                      🔗
+                    </button>
                   </div>
                   <div className="quiz-card-body">
                     <div className="quiz-meta">
