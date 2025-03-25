@@ -184,6 +184,8 @@ const QuizCreator = () => {
       createdAt: new Date().toISOString(),
     };
 
+    console.log('Saved Quiz:', quiz);
+
     // Save quiz to localStorage for now (can be replaced with API call later)
     const savedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
     savedQuizzes.push(quiz);

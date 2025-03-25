@@ -188,7 +188,6 @@ const QuizHome = ({ showSingleQuiz = false }) => {
                   <div className="quiz-card-header">
                     <h3>{quiz.title}</h3>
                   </div>
-                  
                   <div className="quiz-card-body">
                     <div className="quiz-meta">
                       <span>{quiz.questions.length} questions</span>
@@ -196,7 +195,6 @@ const QuizHome = ({ showSingleQuiz = false }) => {
                       <span>Created: {new Date(quiz.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  
                   <div className="quiz-card-footer">
                     <button 
                       onClick={() => handleQuizSelect(quiz)} 
@@ -213,7 +211,6 @@ const QuizHome = ({ showSingleQuiz = false }) => {
               <div className="empty-state-icon">📚</div>
               <h3>No Quizzes Yet</h3>
               <p className="empty-state-text">You haven't created any quizzes yet. Create your first quiz to get started!</p>
-              <Link to="/create" className="btn btn-primary">Create First Quiz</Link>
             </div>
           )}
         </div>

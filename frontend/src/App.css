@@ -91,6 +91,10 @@
   margin-top: 2rem;
 }
 
+.quiz-list-container h2 {
+  text-align: center;
+}
+
 .quiz-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
