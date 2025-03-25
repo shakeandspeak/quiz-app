@@ -145,17 +145,33 @@ const QuizHome = ({ showSingleQuiz = false }) => {
 
   const handleDeleteQuiz = async (quizId) => {
     try {
+      if (!quizId) {
+        console.error('Quiz ID is undefined or null');
+        alert('Cannot delete quiz: Invalid quiz ID');
+        return;
+      }
+
+      console.log('Attempting to delete quiz with ID:', quizId);
+      
+      // Confirm deletion with user
+      if (!window.confirm('Are you sure you want to delete this quiz?')) {
+        return;
+      }
+
       // Delete the quiz from Supabase
-      const { error } = await supabase
+      const { error, count } = await supabase
         .from('quizzes')
         .delete()
-        .eq('id', quizId);
+        .eq('id', quizId)
+        .select('count'); // Add this to get the count of deleted items
       
       if (error) {
         console.error('Error deleting quiz:', error);
-        alert('Failed to delete quiz. Please try again.');
+        alert(`Failed to delete quiz: ${error.message}`);
         return;
       }
+      
+      console.log('Delete response count:', count);
       
       // Update local state
       const updatedQuizzes = availableQuizzes.filter((quiz) => quiz.id !== quizId);
