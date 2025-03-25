@@ -12,6 +12,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [userAnswer, setUserAnswer] = useState('');
+  const [showAnswerDetails, setShowAnswerDetails] = useState(false);
   
   // Load available quizzes from localStorage
   useEffect(() => {
@@ -169,7 +170,31 @@ const QuizHome = ({ showSingleQuiz = false }) => {
         <div className="results-actions">
           <button onClick={handleRetry} className="btn btn-primary">Try Again</button>
           <button onClick={handleGoToHome} className="btn btn-outline">Back to Quizzes</button>
+          <button onClick={() => setShowAnswerDetails(!showAnswerDetails)} className="btn btn-outline">
+            {showAnswerDetails ? 'Hide Details' : 'Show Details'}
+          </button>
         </div>
+
+        {showAnswerDetails && (
+          <div className="answer-details" style={{ marginTop: '1rem' }}>
+            {renderAnswerDetails()}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderAnswerDetails = () => {
+    return (
+      <div className="answer-details">
+        {selectedQuiz.questions.map((question, index) => (
+          <div key={index} className="answer-detail">
+            <p><strong>Question {index + 1}:</strong> {question.questionText}</p>
+            <p>
+              Your Answer: {userAnswer === question.correctAnswer ? <span className="correct">Correct</span> : <span className="incorrect">Incorrect</span>}
+            </p>
+          </div>
+        ))}
       </div>
     );
   };
