@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import '../App.css';
 
 const QuizHome = ({ showSingleQuiz = false }) => {
@@ -29,14 +30,26 @@ const QuizHome = ({ showSingleQuiz = false }) => {
     }
   }, [location]);
 
-  // Load available quizzes from localStorage
+  // Load available quizzes from Supabase
   useEffect(() => {
-    const savedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
-    setAvailableQuizzes(savedQuizzes);
-    
-    // If showSingleQuiz and id are provided, find and set the specific quiz
+    const fetchQuizzes = async () => {
+      const { data: quizzes, error } = await supabase.from('quizzes').select('*');
+
+      if (error) {
+        console.error('Error fetching quizzes:', error);
+        alert('Failed to load quizzes. Please try again later.');
+      } else {
+        setAvailableQuizzes(quizzes);
+      }
+    };
+
+    fetchQuizzes();
+  }, []);
+
+  // If showSingleQuiz and id are provided, find and set the specific quiz
+  useEffect(() => {
     if (showSingleQuiz && id) {
-      const quiz = savedQuizzes.find(q => q.id === id);
+      const quiz = availableQuizzes.find(q => q.id === id);
       if (quiz) {
         setSelectedQuiz(quiz);
       } else {
@@ -44,7 +57,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
         navigate('/');
       }
     }
-  }, [id, showSingleQuiz, navigate]);
+  }, [id, showSingleQuiz, navigate, availableQuizzes]);
 
   const handleQuizSelect = (quiz) => {
     navigate(`/quiz/${quiz.id}`);
