@@ -13,7 +13,8 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   const [showResults, setShowResults] = useState(false);
   const [userAnswer, setUserAnswer] = useState('');
   const [showAnswerDetails, setShowAnswerDetails] = useState(false);
-  
+  const [userAnswers, setUserAnswers] = useState([]);
+
   // Load available quizzes from localStorage
   useEffect(() => {
     const savedQuizzes = JSON.parse(localStorage.getItem('quizzes') || '[]');
@@ -45,10 +46,10 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   
   const handleAnswerSubmit = () => {
     const currentQ = selectedQuiz.questions[currentQuestion];
-    
+
     // Check if answer is correct based on question type
     let isCorrect = false;
-    
+
     if (currentQ.questionType === 'text') {
       // Case insensitive comparison for text answers
       isCorrect = userAnswer.trim().toLowerCase() === currentQ.correctAnswer.toLowerCase();
@@ -56,11 +57,14 @@ const QuizHome = ({ showSingleQuiz = false }) => {
       // For multiple choice and true/false
       isCorrect = userAnswer === currentQ.correctAnswer;
     }
-    
+
     if (isCorrect) {
       setScore(score + 1);
     }
-    
+
+    // Save the user's answer
+    setUserAnswers([...userAnswers, { question: currentQ.questionText, userAnswer, isCorrect }]);
+
     if (currentQuestion + 1 < selectedQuiz.questions.length) {
       setCurrentQuestion(currentQuestion + 1);
       setUserAnswer(''); // Reset answer for next question
@@ -187,11 +191,11 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   const renderAnswerDetails = () => {
     return (
       <div className="answer-details">
-        {selectedQuiz.questions.map((question, index) => (
+        {userAnswers.map((answer, index) => (
           <div key={index} className="answer-detail">
-            <p><strong>Question {index + 1}:</strong> {question.questionText}</p>
+            <p><strong>Question {index + 1}:</strong> {answer.question}</p>
             <p>
-              Your Answer: {userAnswer === question.correctAnswer ? <span className="correct">Correct</span> : <span className="incorrect">Incorrect</span>}
+              Your Answer: {answer.userAnswer} - {answer.isCorrect ? <span className="correct">Correct</span> : <span className="incorrect">Incorrect</span>}
             </p>
           </div>
         ))}
