@@ -296,38 +296,35 @@ const QuizHome = ({ showSingleQuiz = false }) => {
         <div className="quiz-list-container">
           <h2>Available Quizzes</h2>
           {availableQuizzes.length > 0 ? (
-            <div className="quiz-grid">
+            <div className="quiz-list">
               {availableQuizzes.map((quiz) => (
-                <div key={quiz.id} className="quiz-card">
-                  <div className="quiz-card-header">
-                    <h3>{quiz.title}</h3>
+                <div key={quiz.id} className="quiz-list-item">
+                  <div className="quiz-item-content">
+                    <h3 className="quiz-item-title">{quiz.title}</h3>
+                    <div className="quiz-item-meta">
+                      <span className="quiz-item-count">{quiz.questions.length} questions</span>
+                      <span className="quiz-item-date">Created: {new Date(quiz.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                  <div className="quiz-item-actions">
                     <button 
                       onClick={() => handleCopyLink(quiz.id)} 
-                      className="btn btn-icon copy-link-button"
+                      className="btn btn-icon"
                       title="Copy Link"
                     >
                       🔗
                     </button>
-                  </div>
-                  <div className="quiz-card-body">
-                    <div className="quiz-meta">
-                      <span>{quiz.questions.length} questions</span>
-                      <span>•</span>
-                      <span>Created: {new Date(quiz.created_at).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-                  <div className="quiz-card-footer">
                     <button 
                       onClick={() => handleQuizSelect(quiz)} 
                       className="btn btn-primary"
                     >
-                      Start Quiz
+                      Start
                     </button>
                     <button 
                       onClick={() => handleDeleteQuiz(quiz.id)} 
                       className="btn btn-danger"
                     >
-                      Delete Quiz
+                      Delete
                     </button>
                   </div>
                 </div>
