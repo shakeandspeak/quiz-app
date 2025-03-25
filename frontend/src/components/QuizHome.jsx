@@ -143,10 +143,29 @@ const QuizHome = ({ showSingleQuiz = false }) => {
     navigate('/');
   };
 
-  const handleDeleteQuiz = (quizId) => {
-    const updatedQuizzes = availableQuizzes.filter((quiz) => quiz.id !== quizId);
-    setAvailableQuizzes(updatedQuizzes);
-    localStorage.setItem('quizzes', JSON.stringify(updatedQuizzes));
+  const handleDeleteQuiz = async (quizId) => {
+    try {
+      // Delete the quiz from Supabase
+      const { error } = await supabase
+        .from('quizzes')
+        .delete()
+        .eq('id', quizId);
+      
+      if (error) {
+        console.error('Error deleting quiz:', error);
+        alert('Failed to delete quiz. Please try again.');
+        return;
+      }
+      
+      // Update local state
+      const updatedQuizzes = availableQuizzes.filter((quiz) => quiz.id !== quizId);
+      setAvailableQuizzes(updatedQuizzes);
+      
+      alert('Quiz deleted successfully!');
+    } catch (err) {
+      console.error('Unexpected error deleting quiz:', err);
+      alert('An unexpected error occurred. Please try again.');
+    }
   };
 
   const handleCopyLink = (quizId) => {
