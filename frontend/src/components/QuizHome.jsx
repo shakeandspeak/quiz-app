@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import '../App.css';
 
 const QuizHome = ({ showSingleQuiz = false }) => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const [availableQuizzes, setAvailableQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState(null);
   const [quizStarted, setQuizStarted] = useState(false);
@@ -14,6 +15,19 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [showAnswerDetails, setShowAnswerDetails] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
+
+  // Reset states when location changes
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setSelectedQuiz(null);
+      setQuizStarted(false);
+      setCurrentQuestion(0);
+      setScore(0);
+      setShowResults(false);
+      setUserAnswer('');
+      setUserAnswers([]);
+    }
+  }, [location]);
 
   // Load available quizzes from localStorage
   useEffect(() => {
@@ -82,13 +96,14 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   };
 
   const handleGoToHome = () => {
-    // Reset states before navigating back to the main page
+    // Ensure navigation works correctly by resetting states and navigating to home
     setSelectedQuiz(null);
     setQuizStarted(false);
     setCurrentQuestion(0);
     setScore(0);
     setShowResults(false);
     setUserAnswer('');
+    setUserAnswers([]); // Clear user answers
     navigate('/');
   };
 
@@ -218,13 +233,13 @@ const QuizHome = ({ showSingleQuiz = false }) => {
       <div className="quiz-home animate-fade-in">
         <div className="welcome-banner">
           <h1>Welcome to QuizMaster</h1>
+          <div className="welcome-icon">📚</div>
           <p>Create and take quizzes on any topic you want. Test your knowledge or challenge your friends!</p>
           <Link to="/create" className="btn btn-primary btn-lg">Create New Quiz</Link>
         </div>
         
         <div className="quiz-list-container">
           <h2>Available Quizzes</h2>
-          
           {availableQuizzes.length > 0 ? (
             <div className="quiz-grid">
               {availableQuizzes.map((quiz) => (
@@ -265,7 +280,6 @@ const QuizHome = ({ showSingleQuiz = false }) => {
             </div>
           ) : (
             <div className="empty-state">
-              <div className="empty-state-icon">📚</div>
               <h3>No Quizzes Yet</h3>
               <p className="empty-state-text">You haven't created any quizzes yet. Create your first quiz to get started!</p>
             </div>

@@ -111,6 +111,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  transform: scale(0.7); /* Reduce the size of the quiz cards by 30% */
+  transform-origin: top left; /* Ensure the scaling is consistent */
 }
 
 .quiz-card:hover {
@@ -567,4 +569,10 @@
 
 .nav-container .copy-link-button {
   display: none;
+}
+
+.welcome-icon {
+  font-size: 4.9rem; /* Reduce the size of the emoji by 30% */
+  display: block;
+  margin: 0 auto;
 }

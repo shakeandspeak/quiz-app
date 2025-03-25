@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, NavLink, useNavigate } from 'react-router-dom';
 import QuizHome from './components/QuizHome';
 import QuizCreator from './components/QuizCreator';
 import './App.css';
