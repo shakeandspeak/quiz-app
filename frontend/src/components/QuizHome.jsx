@@ -64,6 +64,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   };
   
   const handleStartQuiz = () => {
+    console.log('Starting quiz with selectedQuiz:', selectedQuiz);
     setQuizStarted(true);
     setCurrentQuestion(0);
     setScore(0);
