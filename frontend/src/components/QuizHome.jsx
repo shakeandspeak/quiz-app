@@ -77,6 +77,13 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   };
 
   const handleGoToHome = () => {
+    // Reset states before navigating back to the main page
+    setSelectedQuiz(null);
+    setQuizStarted(false);
+    setCurrentQuestion(0);
+    setScore(0);
+    setShowResults(false);
+    setUserAnswer('');
     navigate('/');
   };
 
