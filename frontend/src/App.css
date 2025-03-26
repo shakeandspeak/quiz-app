@@ -562,10 +562,12 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  color: var(--dark-text); /* Explicitly setting text color */
 }
 
 .option-button:hover {
   border-color: var(--primary-color);
+  color: white; /* Change text color to white when hovered */
 }
 
 .option-button.selected {
