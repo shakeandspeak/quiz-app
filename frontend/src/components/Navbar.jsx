@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 import { supabase } from '../supabaseClient';
 
 const Navbar = () => {
-  const { user } = useAuth();
+  const { user, name } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -23,11 +23,14 @@ const Navbar = () => {
   return (
     <header className="app-header">
       <div className="nav-container">
-        <div className="app-logo" style={{ display: 'flex', alignItems: 'center' }}>
+        <Link to="/" className="app-logo">
           <span style={{ fontSize: '1.5rem', marginRight: '10px' }}>🎓</span>
           Molchanov Eng
-        </div>
+        </Link>
         <nav className="nav-links">
+          <span className="user-name">
+            👋 {name || 'User'}
+          </span>
           <Link to="/" className={location.pathname === '/' ? 'active-link' : ''}>
             Home
           </Link>

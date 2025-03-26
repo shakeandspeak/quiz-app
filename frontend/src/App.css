@@ -30,12 +30,45 @@
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--secondary-color);
+  white-space: nowrap;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .user-name {
+    order: -1;
+    width: 100%;
+    justify-content: center;
+    margin: 0;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .logout-button {
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem 0;
+    border-top: 1px solid #eee;
+  }
 }
 
 /* Navigation styles - ensure links return to default state */
@@ -562,17 +595,19 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: var(--dark-text); /* Explicitly setting text color */
+  color: var(--dark-text);
 }
 
-.option-button:hover {
+.option-button:hover:not(.selected) {
   border-color: var(--primary-color);
-  color: white; /* Change text color to white when hovered */
+  background-color: rgba(67, 97, 238, 0.05);
+  color: var(--dark-text);
 }
 
 .option-button.selected {
   border-color: var(--primary-color);
-  background-color: rgba(67, 97, 238, 0.05);
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .option-button.correct {
@@ -595,6 +630,12 @@
   background-color: #f0f0f0;
   font-weight: 500;
   flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.selected .option-marker {
+  background-color: white;
+  color: var(--primary-color);
 }
 
 .text-answer-container {

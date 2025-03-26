@@ -6,31 +6,33 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [role, setRole] = useState(null);
+    const [name, setName] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUserRole = async (userId) => {
+        const fetchUserProfile = async (userId) => {
             try {
                 // First try to get the existing profile
                 const { data: existingProfile, error: fetchError } = await supabase
                     .from('profiles')
-                    .select('role')
+                    .select('role, name')
                     .eq('id', userId)
                     .single();
 
-                // If profile exists, return its role
+                // If profile exists, return its data
                 if (existingProfile) {
-                    return existingProfile.role;
+                    return existingProfile;
                 }
 
                 // Only if no profile exists, create a new one
                 if (fetchError && fetchError.code === 'PGRST116') { // Record not found error
                     console.log('Profile not found, creating new profile...');
                     
-                    // Get the user's email and metadata
+                    // Get the user's data
                     const { data: userData } = await supabase.auth.getUser();
                     const userEmail = userData?.user?.email;
-                    const userRole = userData?.user?.user_metadata?.role || 'student'; // Use role from metadata if available
+                    const userRole = userData?.user?.user_metadata?.role || 'student';
+                    const userName = userData?.user?.user_metadata?.name || '';
                     
                     // Insert the profile
                     const { data: newProfile, error: insertError } = await supabase
@@ -38,29 +40,30 @@ export const AuthProvider = ({ children }) => {
                         .insert({
                             id: userId,
                             email: userEmail,
-                            role: userRole
+                            role: userRole,
+                            name: userName
                         })
-                        .select('role')
+                        .select('role, name')
                         .single();
                     
                     if (insertError) {
                         console.error('Error creating profile:', insertError);
-                        return userRole;
+                        return { role: userRole, name: userName };
                     }
                     
-                    return newProfile?.role || userRole;
+                    return newProfile || { role: userRole, name: userName };
                 }
 
-                // If there was a different error, log it and return default role
+                // If there was a different error, log it and return defaults
                 if (fetchError) {
                     console.error('Error fetching profile:', fetchError);
-                    return 'student';
+                    return { role: 'student', name: '' };
                 }
 
-                return 'student'; // Default fallback
+                return { role: 'student', name: '' }; // Default fallback
             } catch (error) {
-                console.error('Unexpected error in fetchUserRole:', error);
-                return 'student';
+                console.error('Unexpected error in fetchUserProfile:', error);
+                return { role: 'student', name: '' };
             }
         };
 
@@ -70,11 +73,13 @@ export const AuthProvider = ({ children }) => {
 
             if (session?.user) {
                 setUser(session.user);
-                const userRole = await fetchUserRole(session.user.id);
-                setRole(userRole);
+                const profile = await fetchUserProfile(session.user.id);
+                setRole(profile.role);
+                setName(profile.name);
             } else {
                 setUser(null);
                 setRole(null);
+                setName(null);
             }
 
             setLoading(false);
@@ -85,10 +90,14 @@ export const AuthProvider = ({ children }) => {
         const { subscription } = supabase.auth.onAuthStateChange((event, session) => {
             if (session?.user) {
                 setUser(session.user);
-                fetchUserRole(session.user.id).then(setRole);
+                fetchUserProfile(session.user.id).then(profile => {
+                    setRole(profile.role);
+                    setName(profile.name);
+                });
             } else {
                 setUser(null);
                 setRole(null);
+                setName(null);
             }
         });
 
@@ -98,7 +107,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, role, loading }}>
+        <AuthContext.Provider value={{ user, role, name, loading }}>
             {children}
         </AuthContext.Provider>
     );

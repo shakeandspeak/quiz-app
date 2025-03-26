@@ -38,7 +38,8 @@ const SignupForm = () => {
                 password: formData.password,
                 options: {
                     data: {
-                        role: formData.role // This will be available in session.user.user_metadata.role
+                        role: formData.role,
+                        name: formData.name
                     }
                 }
             });
