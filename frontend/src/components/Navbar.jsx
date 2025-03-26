@@ -23,7 +23,10 @@ const Navbar = () => {
   return (
     <header className="app-header">
       <div className="nav-container">
-        <div className="app-logo">QuizMaster</div>
+        <div className="app-logo" style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ fontSize: '1.5rem', marginRight: '10px' }}>🎓</span>
+          Molchanov Eng
+        </div>
         <nav className="nav-links">
           <Link to="/" className={location.pathname === '/' ? 'active-link' : ''}>
             Home

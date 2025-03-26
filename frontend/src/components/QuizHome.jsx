@@ -303,7 +303,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
       <div className="quiz-home animate-fade-in">
         <div className="welcome-banner">
           <h1>Welcome to QuizMaster</h1>
-          <div className="welcome-icon">📚</div>
+          <img src="/logo.png" alt="Quiz logo" className="welcome-icon" style={{ height: "14.7rem", margin: "0 auto", display: "block" }} />
           <p>Create and take quizzes on any topic you want. Test your knowledge or challenge your friends!</p>
           <Link to="/create" className="btn btn-primary btn-lg">Create New Quiz</Link>
         </div>
