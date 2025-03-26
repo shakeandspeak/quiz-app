@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { supabase } from '../supabaseClient';
+import { Link } from 'react-router-dom';
+import './AuthForms.css';
 
 const SignupForm = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        role: ''
     });
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
@@ -19,36 +23,48 @@ const SignupForm = () => {
         e.preventDefault();
         setIsLoading(true);
         setMessage('');
-        
+
         try {
-            const response = await fetch('/api/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
+            // Sign up the user with Supabase Auth
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
             });
-            
-            const data = await response.json();
-            
-            if (response.ok) {
-                setIsError(false);
-                setMessage('Signup successful! You can now log in.');
-                setFormData({ name: '', email: '', password: '' });
-            } else {
+
+            if (signUpError) {
                 setIsError(true);
-                setMessage(data.message || 'Signup failed. Please try again.');
+                setMessage(signUpError.message);
+                return;
             }
+
+            // Insert user details into the profiles table
+            const { data: profileData, error: profileError } = await supabase
+                .from('profiles')
+                .insert({
+                    id: signUpData.user.id,
+                    email: formData.email,
+                    role: formData.role,
+                });
+
+            if (profileError) {
+                setIsError(true);
+                setMessage(profileError.message);
+                return;
+            }
+
+            setIsError(false);
+            setMessage('Signup successful! You can now log in.');
+            setFormData({ name: '', email: '', password: '', role: '' });
         } catch (error) {
             setIsError(true);
-            setMessage('An error occurred. Please try again later.');
+            setMessage('An unexpected error occurred. Please try again later.');
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="signup-form-container">
+        <div className="auth-form-container">
             <h2>Create an Account</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -60,6 +76,7 @@ const SignupForm = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
+                        placeholder="Enter your name"
                     />
                 </div>
                 
@@ -72,6 +89,7 @@ const SignupForm = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        placeholder="Enter your email"
                     />
                 </div>
                 
@@ -85,10 +103,30 @@ const SignupForm = () => {
                         onChange={handleChange}
                         required
                         minLength="6"
+                        placeholder="Create a password (6+ characters)"
                     />
                 </div>
+
+                <div className="form-group">
+                    <label htmlFor="role">Role</label>
+                    <select
+                        id="role"
+                        name="role"
+                        value={formData.role || ''}
+                        onChange={handleChange}
+                        required
+                    >
+                        <option value="">Select a role</option>
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                    </select>
+                </div>
                 
-                <button type="submit" disabled={isLoading}>
+                <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="submit-button"
+                >
                     {isLoading ? 'Signing up...' : 'Sign Up'}
                 </button>
                 
@@ -97,6 +135,10 @@ const SignupForm = () => {
                         {message}
                     </div>
                 )}
+
+                <div className="auth-links">
+                    Already have an account? <Link to="/login">Log in</Link>
+                </div>
             </form>
         </div>
     );

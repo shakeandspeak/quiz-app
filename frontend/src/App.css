@@ -679,3 +679,135 @@
   display: block;
   margin: 0 auto;
 }
+
+/* Home Page Styles */
+.home-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-section {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.welcome-section h1 {
+  font-size: 2.5rem;
+  color: #3a3a3a;
+  margin-bottom: 15px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Auth Form Styles */
+.auth-form-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.auth-form-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: #3a3a3a;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4361ee;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.submit-button {
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 0;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #3a56e4;
+}
+
+.submit-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.message.error {
+  background-color: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+}
+
+.message.success {
+  background-color: #dcfce7;
+  color: #22c55e;
+  border: 1px solid #bbf7d0;
+}
+
+.auth-links {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.auth-links a {
+  color: #4361ee;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-links a:hover {
+  text-decoration: underline;
+}

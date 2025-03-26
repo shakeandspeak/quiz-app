@@ -1,16 +1,19 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
+import './AuthForms.css';
 
 const LoginForm = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
+    const [message, setMessage] = useState('');
+    const [isError, setIsError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     
     const navigate = useNavigate();
-
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -18,55 +21,38 @@ const LoginForm = () => {
             [name]: value
         }));
     };
-
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        setError('');
-
-        if (!validateEmail(formData.email)) {
-            setError('Invalid email format. Please enter a valid email address.');
-            setIsLoading(false);
-            return;
-        }
-
+        setMessage('');
+        
         try {
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: formData.email,
+                password: formData.password,
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
+            
+            if (error) {
+                setIsError(true);
+                setMessage(error.message);
+                return;
             }
-
-            // Store the JWT token in localStorage
-            localStorage.setItem('token', data.token);
-
-            // Redirect to dashboard
+            
+            // Login successful, redirect to dashboard
             navigate('/dashboard');
-
+            
         } catch (err) {
-            setError(err.message || 'Something went wrong. Please try again.');
+            setIsError(true);
+            setMessage('An unexpected error occurred. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
-
+    
     return (
-        <div className="login-form-container">
-            <h2>Login</h2>
-            {error && <div className="error-message">{error}</div>}
+        <div className="auth-form-container">
+            <h2>Log In</h2>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
@@ -77,6 +63,7 @@ const LoginForm = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
+                        placeholder="Enter your email"
                     />
                 </div>
                 <div className="form-group">
@@ -88,11 +75,26 @@ const LoginForm = () => {
                         value={formData.password}
                         onChange={handleChange}
                         required
+                        placeholder="Enter your password"
                     />
                 </div>
-                <button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Logging in...' : 'Login'}
+                <button 
+                    type="submit" 
+                    className="submit-button"
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Logging in...' : 'Log In'}
                 </button>
+                
+                {message && (
+                    <div className={`message ${isError ? 'error' : 'success'}`}>
+                        {message}
+                    </div>
+                )}
+                
+                <div className="auth-links">
+                    Don't have an account? <Link to="/">Sign up</Link>
+                </div>
             </form>
         </div>
     );
