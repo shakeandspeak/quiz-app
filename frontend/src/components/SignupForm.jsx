@@ -36,6 +36,11 @@ const SignupForm = () => {
             const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                 email: formData.email,
                 password: formData.password,
+                options: {
+                    data: {
+                        role: formData.role // This will be available in session.user.user_metadata.role
+                    }
+                }
             });
 
             if (signUpError) {
@@ -57,29 +62,8 @@ const SignupForm = () => {
     };
 
     useEffect(() => {
-        const insertProfileAfterLogin = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-
-            if (session?.user) {
-                try {
-                    const { error: profileError } = await supabase
-                        .from('profiles')
-                        .insert({
-                            id: session.user.id,
-                            email: session.user.email,
-                            role: formData.role || 'student',
-                        });
-
-                    if (profileError) {
-                        console.error('Error inserting profile:', profileError);
-                    }
-                } catch (error) {
-                    console.error('Unexpected error inserting profile:', error);
-                }
-            }
-        };
-
-        insertProfileAfterLogin();
+        // Remove the insertProfileAfterLogin effect
+        // Profile creation is now handled in AuthContext
     }, []);
 
     return (
