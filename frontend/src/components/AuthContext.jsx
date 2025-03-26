@@ -10,15 +10,41 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUserRole = async (userId) => {
+            // First try to get the existing profile
             const { data, error } = await supabase
                 .from('profiles')
                 .select('role')
                 .eq('id', userId)
                 .single();
 
-            if (error) {
-                console.error('Error fetching user role:', error);
-                return null;
+            // If no profile exists or there was an error, attempt to create one
+            if (error || !data) {
+                console.log('Profile not found, attempting to create one...');
+                
+                // Get the user's email
+                const { data: userData } = await supabase.auth.getUser();
+                const userEmail = userData?.user?.email;
+                
+                // Default to 'student' role if none is specified
+                const defaultRole = 'student';
+                
+                // Insert the profile
+                const { data: newProfile, error: insertError } = await supabase
+                    .from('profiles')
+                    .insert({
+                        id: userId,
+                        email: userEmail,
+                        role: defaultRole
+                    })
+                    .select('role')
+                    .single();
+                
+                if (insertError) {
+                    console.error('Error creating profile:', insertError);
+                    return defaultRole;
+                }
+                
+                return newProfile?.role || defaultRole;
             }
 
             return data?.role;
