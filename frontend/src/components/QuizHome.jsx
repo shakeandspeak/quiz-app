@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import '../App.css';
+import { useAuth } from "../components/AuthContext";
 
 const QuizHome = ({ showSingleQuiz = false }) => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [showAnswerDetails, setShowAnswerDetails] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
+  const { role } = useAuth();
 
   // Reset states when location changes
   useEffect(() => {
@@ -144,6 +146,11 @@ const QuizHome = ({ showSingleQuiz = false }) => {
   };
 
   const handleDeleteQuiz = async (quizId) => {
+    if (role !== 'teacher') {
+      alert('You do not have permission to delete quizzes.');
+      return;
+    }
+
     try {
       if (!quizId) {
         console.error('Quiz ID is undefined or null');
@@ -152,7 +159,7 @@ const QuizHome = ({ showSingleQuiz = false }) => {
       }
 
       console.log('Attempting to delete quiz with ID:', quizId);
-      
+
       // Confirm deletion with user
       if (!window.confirm('Are you sure you want to delete this quiz?')) {
         return;
@@ -163,19 +170,19 @@ const QuizHome = ({ showSingleQuiz = false }) => {
         .from('quizzes')
         .delete()
         .eq('id', quizId);
-      
+
       if (error) {
         console.error('Error deleting quiz:', error);
         alert(`Failed to delete quiz: ${error.message}`);
         return;
       }
-      
+
       console.log('Quiz deleted successfully from Supabase.');
-      
+
       // Update local state
       const updatedQuizzes = availableQuizzes.filter((quiz) => quiz.id !== quizId);
       setAvailableQuizzes(updatedQuizzes);
-      
+
       alert('Quiz deleted successfully!');
     } catch (err) {
       console.error('Unexpected error deleting quiz:', err);
@@ -252,19 +259,31 @@ const QuizHome = ({ showSingleQuiz = false }) => {
 
   const renderResults = () => {
     const percentage = Math.round((score / selectedQuiz.questions.length) * 100);
-    
+
+    let emoji = '';
+    let animationClass = '';
+
+    if (percentage > 70) {
+      emoji = '🎉';
+      animationClass = 'confetti-animation'; // Placeholder for confetti animation
+    } else if (percentage >= 50) {
+      emoji = '👌';
+    } else {
+      emoji = '😢';
+    }
+
     return (
-      <div className="quiz-results animate-fade-in">
-        <h2>Quiz Results</h2>
-        
-        <div className="score-circle">
+      <div className={`quiz-results animate-fade-in ${animationClass}`} style={{ textAlign: 'center' }}>
+        <h2 style={{ marginBottom: '0.5rem' }}>Quiz Results</h2>
+        <div className="score-circle" style={{ marginBottom: '0.25rem' }}>
           <div className="score-percentage">{percentage}%</div>
         </div>
-        
-        <div className="score-detail">
+        <div className="score-detail" style={{ fontSize: '4rem', margin: '0.25rem 0' }}>
+          {emoji}
+        </div>
+        <div className="score-text" style={{ fontSize: '1.5rem' }}>
           You scored {score} out of {selectedQuiz.questions.length} questions
         </div>
-        
         <div className="results-actions">
           <button onClick={handleRetry} className="btn btn-primary">Try Again</button>
           <button onClick={handleGoToHome} className="btn btn-outline">Back to Quizzes</button>
@@ -272,7 +291,6 @@ const QuizHome = ({ showSingleQuiz = false }) => {
             {showAnswerDetails ? 'Hide Details' : 'Show Details'}
           </button>
         </div>
-
         {showAnswerDetails && (
           <div className="answer-details" style={{ marginTop: '1rem' }}>
             {renderAnswerDetails()}
@@ -335,12 +353,14 @@ const QuizHome = ({ showSingleQuiz = false }) => {
                     >
                       Start
                     </button>
-                    <button 
-                      onClick={() => handleDeleteQuiz(quiz.id)} 
-                      className="btn btn-danger"
-                    >
-                      Delete
-                    </button>
+                    {role === 'teacher' && (
+                      <button 
+                        onClick={() => handleDeleteQuiz(quiz.id)} 
+                        className="btn btn-danger"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

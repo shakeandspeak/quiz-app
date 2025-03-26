@@ -20,8 +20,7 @@ const Home = () => {
     return (
         <div className="home-container">
             <div className="welcome-section">
-                <h1>Welcome to the Quiz App</h1>
-                <p className="subtitle">Create, share, and take quizzes with ease</p>
+                <h1>Welcome to QuizMaster</h1>
             </div>
             <SignupForm />
         </div>
