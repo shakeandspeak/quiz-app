@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
-import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import QuizCreator from './components/QuizCreator';
+import QuizHome from './components/QuizHome';
 
 const App = () => {
     return (
@@ -10,7 +11,8 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/create" element={<QuizCreator />} />
+                <Route path="/quiz/:id" element={<QuizHome showSingleQuiz={true} />} />
             </Routes>
         </Router>
     );

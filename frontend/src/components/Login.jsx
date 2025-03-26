@@ -5,10 +5,15 @@ import LoginForm from './LoginForm';
 import './AuthForms.css';
 
 const Login = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
 
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    // If already logged in, redirect to home page
     if (user) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return (

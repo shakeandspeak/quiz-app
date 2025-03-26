@@ -39,8 +39,8 @@ const LoginForm = () => {
                 return;
             }
             
-            // Login successful, redirect to dashboard
-            navigate('/dashboard');
+            // Login successful, redirect to home page
+            navigate('/');
             
         } catch (err) {
             setIsError(true);
