@@ -7,14 +7,16 @@
   color: var(--dark-text);
 }
 
-/* Navigation and Header */
+/* Fix for app header - restore visual separation */
 .app-header {
   background-color: var(--light-bg);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
+/* Updated Navigation and Header Styles */
 .nav-container {
   display: flex;
   justify-content: space-between;
@@ -32,22 +34,48 @@
 
 .nav-links {
   display: flex;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 2rem;
 }
 
+/* Navigation styles - ensure links return to default state */
 .nav-links a {
   color: var(--dark-text);
   font-weight: 500;
-  transition: color 0.2s;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s;
 }
 
 .nav-links a:hover {
   color: var(--primary-color);
 }
 
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-color);
+  transform: scaleX(0);
+  transition: transform 0.3s;
+}
+
+.nav-links a:hover::after {
+  transform: scaleX(1);
+}
+
+/* Remove permanent underline from active links */
 .active-link {
   color: var(--primary-color) !important;
-  border-bottom: 2px solid var(--primary-color);
+}
+
+/* Remove the permanent border-bottom from active links */
+.active-link {
+  border-bottom: none;
 }
 
 /* Container Styles */
